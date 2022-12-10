@@ -3,6 +3,7 @@ use std::error::Error;
 
 use storybuilder_cli::{
     cli::Cli,
+    game_events::run_game,
     player_info::PlayerInfo,
     utils::{
         get_game_type, get_generated_client_id, get_generated_game_code, get_join_code,
@@ -24,6 +25,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         cli.current_player_info.room_id = Box::new(get_generated_game_code(&cli).await?);
         cli.current_player_info.username = Box::new(get_username().await?);
         cli.current_player_info.client_id = Box::new(get_generated_client_id(&cli).await?);
+
+        run_game(&cli).await?;
     } else if game_type == "Join Game" {
         cli.current_player_info.is_host = Box::new(false);
 
@@ -38,6 +41,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         cli.current_player_info.room_id = Box::new(potential_join_code);
         cli.current_player_info.username = Box::new(get_username().await?);
         cli.current_player_info.client_id = Box::new(get_generated_client_id(&cli).await?);
+
+        run_game(&cli).await?;
     } else {
         println!("Quitting...");
 

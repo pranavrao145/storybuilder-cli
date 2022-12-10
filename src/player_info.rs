@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct PlayerInfo {
     /// the username of this player
     pub username: Box<String>,

@@ -1,18 +1,27 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Message {
     /// type of this message
-    message_type: String,
+    #[serde(rename(deserialize = "messageType", serialize = "messageType"))]
+    pub message_type: String,
     /// the room with which this message is associated
-    room_id: String,
+    #[serde(rename(deserialize = "roomId", serialize = "roomId"))]
+    pub room_id: String,
     /// the content of this message
-    content: String,
+    pub content: String,
     /// the username of the sender of this message
-    sender_username: String,
+    #[serde(rename(deserialize = "senderUsername", serialize = "senderUsername"))]
+    pub sender_username: String,
     /// the id of the sender of this message
-    sender_id: i32,
+    #[serde(rename(deserialize = "senderId", serialize = "senderId"))]
+    pub sender_id: i32,
     /// the username of the recipient of this message
-    recipient_username: String,
+    #[serde(rename(deserialize = "recipientUsername", serialize = "recipientUsername"))]
+    pub recipient_username: String,
     /// the id of the recipient of this message
-    recipient_id: i32,
+    #[serde(rename(deserialize = "recipientId", serialize = "recipientId"))]
+    pub recipient_id: i32,
 }
 
 impl Message {

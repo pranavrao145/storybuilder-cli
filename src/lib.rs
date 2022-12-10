@@ -9,3 +9,9 @@ pub mod cli;
 
 /// utils
 pub mod utils;
+
+/// game events
+pub mod game_events;
+
+/// ui utils
+pub mod ui_utils;

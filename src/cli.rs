@@ -2,6 +2,7 @@ use url::Url;
 
 use crate::player_info::PlayerInfo;
 
+#[derive(Clone)]
 pub struct Cli {
     /// the player info for this instance of the CLI
     pub current_player_info: PlayerInfo,
