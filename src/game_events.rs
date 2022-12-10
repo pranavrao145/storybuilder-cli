@@ -84,8 +84,6 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
         });
     }
 
-    // regardless of host or not, wait for game start, returning when the game is starting
-
     let cli_clone = cli.clone();
 
     tokio::spawn(async move {

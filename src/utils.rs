@@ -13,6 +13,20 @@ use url::Url;
 
 use crate::cli::Cli;
 
+async fn trim_newline(s: &String) -> Result<String, Box<dyn Error>> {
+    let mut s = s.clone();
+
+    if s.ends_with('\n') {
+        s.pop();
+
+        if s.ends_with('\r') {
+            s.pop();
+        }
+    }
+
+    Ok(s)
+}
+
 pub async fn get_server_url() -> Result<Url, Box<dyn Error>> {
     Ok(Url::parse(&env::var("STORYBUILDER_CLI_SERVER_URL")?)?)
 }
@@ -92,7 +106,7 @@ pub async fn get_username() -> Result<String, Box<dyn Error>> {
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
 
-    input.truncate(input.len() - 1);
+    let input = trim_newline(&input).await?;
 
     Ok(input)
 }
@@ -104,6 +118,8 @@ pub async fn get_join_code() -> Result<String, Box<dyn Error>> {
 
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
+
+    let input = trim_newline(&input).await?;
 
     Ok(input)
 }
@@ -131,6 +147,8 @@ pub async fn get_story_line(
     io::stdin()
         .read_line(&mut input)
         .expect("Failed to get story line.");
+
+    let input = trim_newline(&input).await?;
 
     Ok(input)
 }
