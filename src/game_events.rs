@@ -1,5 +1,6 @@
 use futures_util::{SinkExt, TryStreamExt};
-use std::{error::Error, time::Duration};
+use std::io::Write;
+use std::{error::Error, io, time::Duration};
 
 use crossterm::event::{poll, Event, KeyCode};
 use futures_util::StreamExt;
@@ -29,7 +30,7 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
     server_url.set_path("ws");
     server_url.set_query(Some(
         format!(
-            "username={}&roomId={}&isHost={}&clientID={}",
+            "username={}&roomId={}&isHost={}&clientId={}",
             cli.current_player_info.username,
             cli.current_player_info.room_id,
             cli.current_player_info.is_host,
@@ -55,7 +56,7 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
                         // write join message to socket
 
                         let msg: Message = Message {
-                            message_type: "story".to_string(),
+                            message_type: "start".to_string(),
                             room_id: *cli_clone.current_player_info.room_id,
                             content: "".to_string(),
                             sender_username: *cli_clone.current_player_info.username,
@@ -97,7 +98,7 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
                         .unwrap_or_else(|_| Message::new());
 
                     match message.message_type.as_str() {
-                        "join" => {
+                        "join" | "leave" => {
                             update_game_waiting_screen_ui(&cli_clone).await.unwrap();
                         }
                         "start" => {
@@ -108,7 +109,13 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
                 }
                 Ok(None) => {}
                 Err(_) => {
-                    // TODO: should I panic here?
+                    let stdout = io::stdout();
+                    writeln!(
+                        &mut stdout.lock(),
+                        "Fatal error: lost connection to server."
+                    )
+                    .unwrap();
+
                     return;
                 }
             }

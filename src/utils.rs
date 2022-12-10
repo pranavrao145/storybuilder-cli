@@ -92,6 +92,8 @@ pub async fn get_username() -> Result<String, Box<dyn Error>> {
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
 
+    input.truncate(input.len() - 1);
+
     Ok(input)
 }
 
