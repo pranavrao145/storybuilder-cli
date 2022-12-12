@@ -31,9 +31,9 @@ pub async fn update_game_waiting_screen_ui(cli: &Cli) -> Result<(), Box<dyn std:
         cli.current_player_info.username
     )?;
 
-    writeln!(&mut stdout.lock(), "\nCurrent players ({}):", resp.len())?;
-
     let players = resp.get("roomMembers").unwrap();
+
+    writeln!(&mut stdout.lock(), "\nCurrent players ({}):", players.len())?;
 
     for player in players {
         if *player == *cli.current_player_info.username {
