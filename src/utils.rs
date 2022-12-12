@@ -13,7 +13,7 @@ use url::Url;
 
 use crate::cli::Cli;
 
-async fn trim_newline(s: &String) -> Result<String, Box<dyn Error>> {
+pub async fn trim_newline(s: &String) -> Result<String, Box<dyn Error>> {
     let mut s = s.clone();
 
     if s.ends_with('\n') {

@@ -57,3 +57,22 @@ pub async fn update_game_waiting_screen_ui(cli: &Cli) -> Result<(), Box<dyn std:
 
     Ok(())
 }
+
+pub async fn update_turn_waiting_screen_ui(
+    current_player_username: Option<&String>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let stdout = io::stdout();
+    clearscreen::clear().unwrap();
+
+    writeln!(&mut stdout.lock(), "Waiting for turn...")?;
+
+    if current_player_username.is_some() {
+        writeln!(
+            &mut stdout.lock(),
+            "Now playing: {}",
+            current_player_username.unwrap()
+        )?;
+    }
+
+    Ok(())
+}
