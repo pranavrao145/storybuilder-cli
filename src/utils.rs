@@ -98,6 +98,24 @@ pub async fn get_generated_client_id(cli: &Cli) -> Result<i32, Box<dyn Error>> {
     Ok(client_id)
 }
 
+pub async fn get_all_story_lines(cli: &Cli) -> Result<Vec<String>, Box<dyn Error>> {
+    let mut server_url = cli.server_url.clone();
+
+    server_url.set_path("get_all_story_lines");
+    server_url.set_query(Some(
+        format!("roomId={}", cli.current_player_info.room_id).as_str(),
+    ));
+
+    let resp = reqwest::get(server_url)
+        .await?
+        .json::<HashMap<String, Vec<String>>>()
+        .await?;
+
+    let story_lines = resp.get("storyLines").unwrap();
+
+    Ok(story_lines.to_vec())
+}
+
 pub async fn get_username() -> Result<String, Box<dyn Error>> {
     print!("Please enter a username: ");
 

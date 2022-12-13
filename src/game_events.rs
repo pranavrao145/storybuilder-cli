@@ -7,18 +7,19 @@ use futures_util::StreamExt;
 use tokio_tungstenite::connect_async;
 
 use crate::ui_utils::update_turn_waiting_screen_ui;
-use crate::utils::{get_story_line, trim_newline};
+use crate::utils::{get_all_story_lines, get_story_line, trim_newline};
 use crate::{cli::Cli, message::Message, ui_utils::update_game_waiting_screen_ui};
 
 pub async fn run_game(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     wait_for_game_start(cli).await?;
     play_game(&cli).await?;
-    end_game().await?;
+    end_game(&cli).await?;
 
     Ok(())
 }
 
-pub async fn end_game() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn end_game(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
+
     println!("The game has ended.");
     Ok(())
 }
