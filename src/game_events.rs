@@ -159,11 +159,42 @@ pub async fn repeat_wait_and_execute_turn(cli: &Cli) -> Result<(), Box<dyn Error
                                 let story_line = get_story_line(
                                     Some(&message.content),
                                     Some(&message.sender_username),
+                                    Some(&cli_clone.current_player_info.is_host),
                                 )
                                 .await
                                 .unwrap();
 
                                 let story_line = trim_newline(&story_line).await.unwrap();
+
+                                if *cli_clone.current_player_info.is_host
+                                    && story_line == "END_STORY".to_string()
+                                {
+                                    let msg: Message = Message {
+                                        message_type: "end".to_string(),
+                                        room_id: cli_clone.current_player_info.room_id.to_string(),
+                                        content: "".to_string(),
+                                        sender_username: cli_clone
+                                            .current_player_info
+                                            .username
+                                            .to_string(),
+                                        sender_id: *cli_clone.current_player_info.client_id,
+                                        recipient_username: "".to_string(),
+                                        recipient_id: -1,
+                                    };
+
+                                    let msg_stringified = serde_json::to_string(&msg).unwrap();
+
+                                    write
+                                        .send(tokio_tungstenite::tungstenite::Message::Text(
+                                            msg_stringified,
+                                        ))
+                                        .await
+                                        .unwrap();
+
+                                    write.close().await.unwrap();
+
+                                    return;
+                                }
 
                                 let msg: Message = Message {
                                     message_type: "story".to_string(),
@@ -194,7 +225,9 @@ pub async fn repeat_wait_and_execute_turn(cli: &Cli) -> Result<(), Box<dyn Error
                                     .unwrap();
                             }
                         }
-                        "end" => {}
+                        "end" => {
+                            return;
+                        }
                         _ => {}
                     }
                 }
@@ -237,7 +270,7 @@ pub async fn play_game(cli: &Cli) -> Result<(), Box<dyn Error>> {
         let (socket, _) = connect_async(server_url).await?;
         let (mut write, _) = socket.split();
 
-        let story_line = get_story_line(None, None).await.unwrap();
+        let story_line = get_story_line(None, None, None).await.unwrap();
 
         let story_line = trim_newline(&story_line).await.unwrap();
 

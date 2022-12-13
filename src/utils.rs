@@ -127,6 +127,7 @@ pub async fn get_join_code() -> Result<String, Box<dyn Error>> {
 pub async fn get_story_line(
     last_story_line: Option<&String>,
     last_player_username: Option<&String>,
+    current_player_is_host: Option<&bool>,
 ) -> Result<String, Box<dyn Error>> {
     clearscreen::clear().unwrap();
 
@@ -138,15 +139,21 @@ pub async fn get_story_line(
         );
     }
 
-    print!("Please enter the next line of the story: ");
+    let current_player_is_host = current_player_is_host.unwrap_or_else(|| &false);
 
-    io::Write::flush(&mut io::stdout()).expect("Failed to flush stdout.");
+    let mut extension = "".to_string();
+
+    if *current_player_is_host {
+        extension = " (Enter END_STORY to end the game)".to_string();
+    }
+
+    print!("Please enter the next line of the story{}: ", extension);
+
+    io::Write::flush(&mut io::stdout()).unwrap();
 
     let mut input = "".to_string();
 
-    io::stdin()
-        .read_line(&mut input)
-        .unwrap();
+    io::stdin().read_line(&mut input).unwrap();
 
     let input = trim_newline(&input).await?;
 
