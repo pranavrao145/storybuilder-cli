@@ -26,9 +26,7 @@ pub async fn end_game() -> Result<(), Box<dyn std::error::Error>> {
 pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
     let mut server_url = cli.server_url.clone();
 
-    server_url
-        .set_scheme("ws")
-        .expect("Failed to set server url scheme to ws.");
+    server_url.set_scheme("ws").unwrap();
     server_url.set_path("ws");
     server_url.set_query(Some(
         format!(
@@ -67,15 +65,14 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
                             recipient_id: -1,
                         };
 
-                        let msg_stringified = serde_json::to_string(&msg)
-                            .expect("Failed to convert struct to jsonified string.");
+                        let msg_stringified = serde_json::to_string(&msg).unwrap();
 
                         write
                             .send(tokio_tungstenite::tungstenite::Message::Text(
                                 msg_stringified,
                             ))
                             .await
-                            .expect("Failed to send join message to server.");
+                            .unwrap();
 
                         write.close().await.unwrap();
 
@@ -129,9 +126,7 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
 pub async fn repeat_wait_and_execute_turn(cli: &Cli) -> Result<(), Box<dyn Error>> {
     let mut server_url = cli.server_url.clone();
 
-    server_url
-        .set_scheme("ws")
-        .expect("Failed to set server url scheme to ws.");
+    server_url.set_scheme("ws").unwrap();
     server_url.set_path("ws");
     server_url.set_query(Some(
         format!(
@@ -226,9 +221,7 @@ pub async fn play_game(cli: &Cli) -> Result<(), Box<dyn Error>> {
     if *cli.current_player_info.is_host {
         let mut server_url = cli.server_url.clone();
 
-        server_url
-            .set_scheme("ws")
-            .expect("Failed to set server url scheme to ws.");
+        server_url.set_scheme("ws").unwrap();
         server_url.set_path("ws");
         server_url.set_query(Some(
             format!(

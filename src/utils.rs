@@ -146,7 +146,7 @@ pub async fn get_story_line(
 
     io::stdin()
         .read_line(&mut input)
-        .expect("Failed to get story line.");
+        .unwrap();
 
     let input = trim_newline(&input).await?;
 
