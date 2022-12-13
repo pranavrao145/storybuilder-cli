@@ -6,8 +6,8 @@ use crossterm::event::{poll, Event, KeyCode};
 use futures_util::StreamExt;
 use tokio_tungstenite::connect_async;
 
-use crate::ui_utils::update_turn_waiting_screen_ui;
-use crate::utils::{get_all_story_lines, get_story_line, trim_newline};
+use crate::ui_utils::{update_end_game_ui, update_turn_waiting_screen_ui};
+use crate::utils::{get_story_line, trim_newline};
 use crate::{cli::Cli, message::Message, ui_utils::update_game_waiting_screen_ui};
 
 pub async fn run_game(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
@@ -19,8 +19,8 @@ pub async fn run_game(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 pub async fn end_game(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
+    update_end_game_ui(cli).await?;
 
-    println!("The game has ended.");
     Ok(())
 }
 
