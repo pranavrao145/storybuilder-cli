@@ -1,25 +1,14 @@
+use std::io;
 use std::io::Write;
 use std::time::Duration;
-use std::{collections::HashMap, io};
 
 use crossterm::event::{poll, Event, KeyCode};
 
 use crate::cli::Cli;
-use crate::utils::get_all_story_lines;
+use crate::utils::{get_all_story_lines, get_players_list};
 
 pub async fn update_game_waiting_screen_ui(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
     let stdout = io::stdout();
-    let mut temp_server_url = cli.server_url.clone();
-
-    temp_server_url.set_path("get_members");
-    temp_server_url.set_query(Some(
-        format!("roomId={}", cli.current_player_info.room_id).as_str(),
-    ));
-
-    let resp = reqwest::get(temp_server_url)
-        .await?
-        .json::<HashMap<String, Vec<String>>>()
-        .await?;
 
     clearscreen::clear().unwrap();
 
@@ -35,11 +24,11 @@ pub async fn update_game_waiting_screen_ui(cli: &Cli) -> Result<(), Box<dyn std:
         cli.current_player_info.username
     )?;
 
-    let players = resp.get("roomMembers").unwrap();
+    let players = get_players_list(cli).await?;
 
     writeln!(&mut stdout.lock(), "\nCurrent players ({}):", players.len())?;
 
-    for player in players {
+    for player in &players {
         writeln!(&mut stdout.lock(), "{}", player)?;
     }
 

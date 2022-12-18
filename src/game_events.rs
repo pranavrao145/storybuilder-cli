@@ -7,7 +7,7 @@ use futures_util::StreamExt;
 use tokio_tungstenite::connect_async;
 
 use crate::ui_utils::{update_end_game_ui, update_turn_waiting_screen_ui};
-use crate::utils::{get_story_line, trim_newline};
+use crate::utils::{get_players_list, get_story_line, trim_newline};
 use crate::{cli::Cli, message::Message, ui_utils::update_game_waiting_screen_ui};
 
 pub async fn run_game(cli: &Cli) -> Result<(), Box<dyn std::error::Error>> {
@@ -53,7 +53,9 @@ pub async fn wait_for_game_start(cli: &Cli) -> Result<(), Box<dyn Error>> {
                 if poll(Duration::from_millis(1_000)).unwrap() {
                     let event = crossterm::event::read().unwrap();
 
-                    if event == Event::Key(KeyCode::Enter.into()) {
+                    if event == Event::Key(KeyCode::Enter.into())
+                        && get_players_list(&cli_clone).await.unwrap().len() > 1
+                    {
                         // write join message to socket
 
                         let msg: Message = Message {

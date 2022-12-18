@@ -177,3 +177,21 @@ pub async fn get_story_line(
 
     Ok(input)
 }
+
+pub async fn get_players_list(cli: &Cli) -> Result<Vec<String>, Box<dyn Error>> {
+    let mut server_url = cli.server_url.clone();
+
+    server_url.set_path("get_members");
+    server_url.set_query(Some(
+        format!("roomId={}", cli.current_player_info.room_id).as_str(),
+    ));
+
+    let resp = reqwest::get(server_url)
+        .await?
+        .json::<HashMap<String, Vec<String>>>()
+        .await?;
+
+    let players = resp.get("roomMembers").unwrap();
+
+    Ok(players.to_vec())
+}
