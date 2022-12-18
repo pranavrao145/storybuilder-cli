@@ -117,14 +117,21 @@ pub async fn get_all_story_lines(cli: &Cli) -> Result<Vec<String>, Box<dyn Error
 }
 
 pub async fn get_username() -> Result<String, Box<dyn Error>> {
-    print!("Please enter a username: ");
+    let mut input = "".to_string();
+    let mut username_empty = true;
 
-    io::Write::flush(&mut io::stdout())?;
+    while username_empty {
+        print!("Please enter a username: ");
 
-    let mut input = String::new();
-    io::stdin().read_line(&mut input)?;
+        io::Write::flush(&mut io::stdout())?;
 
-    let input = trim_newline(&input).await?;
+        input = String::new();
+        io::stdin().read_line(&mut input)?;
+
+        input = trim_newline(&input).await?;
+
+        username_empty = if input.is_empty() { true } else { false };
+    }
 
     Ok(input)
 }
