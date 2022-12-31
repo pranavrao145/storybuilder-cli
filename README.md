@@ -10,6 +10,18 @@ CLI client for StoryBuilder. Made in Rust.
 
 # How to Use
 
+First, if it's not already there, clone this repository to your local machine:
+
+```
+git clone https://github.com/pranavrao145/storybuilder-cli.git
+```
+
+Change into the directory you cloned:
+
+```
+cd storybuilder-cli
+```
+
 To run the CLI, execute the following command:
 
 ```
