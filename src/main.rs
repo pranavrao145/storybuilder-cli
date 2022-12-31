@@ -16,8 +16,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // load environment variables
     dotenv().ok();
 
-    let server_url = get_server_url().await?;
-    let mut cli = Cli::new(PlayerInfo::new(), server_url);
+    let server_url = get_server_url().await;
+
+    if server_url.is_err() {
+        println!("No server URL found (make sure to set STORYBUILDER_CLI_SERVER_URL). Quitting...");
+
+        return Ok(());
+    }
+
+    let mut cli = Cli::new(PlayerInfo::new(), server_url.unwrap());
     let game_type = get_game_type().await?;
 
     if game_type == "New Game" {
